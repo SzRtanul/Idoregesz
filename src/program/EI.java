@@ -9,5 +9,7 @@ package program;
  * @author SzabóRoland(SZF_2023
  */
 public class EI {
-    
+    interface charachterListener{
+        public void charachterUpdate();
+    }
 }
