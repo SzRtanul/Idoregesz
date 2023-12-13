@@ -15,8 +15,8 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
      */
     public MainGUI() {
         initComponents();
+        Pr_eletero.setMaximum(Idoregesz.getMaxEletero());
         Idoregesz.addListener(this);
-        charachterUpdate();
     }
     
     public void charachterUpdate(){

@@ -40,11 +40,13 @@ public class Idoregesz {
     private static int eletero = 10;
     private static int maxEletero = 10;
     private static List<String> targyak;
+    private static int ugrasSzam = 0;
     
     // Előkészület
     public static void Restart(boolean reupload){
         aktualisHelyszin = 1;
         if(reupload) uploadHelyszinList();
+        update();
     }
     
     private static void uploadHelyszinList(){
@@ -57,10 +59,11 @@ public class Idoregesz {
             sc.close();
         } catch (FileNotFoundException ex) {
             //Logger.getLogger(MusicDriveL.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-        
+        } 
+    }
+    
+    private static boolean testCheck(){
+        return true;
     }
     
     
@@ -79,7 +82,7 @@ public class Idoregesz {
             default:
                 break;
         }
-        if (args.length > 1){
+        if (args.length > 1 && testCheck()){
             helyszinek.get(0).getClass();
         }
         update();
@@ -111,6 +114,7 @@ class Helyszin{
     private List<Mutat> mutat;
     private List<String> targyak;
     private List<String> megkozelitesiFeltetel;
+    private boolean zart;
     
     
     public Helyszin(){
