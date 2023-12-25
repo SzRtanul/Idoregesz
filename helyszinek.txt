@@ -1,14 +1,14 @@
-Egy óriási mezőn vagy. Nyugat felé egy hatalmas épület körvonalai tűnnek fel.
-Napfényes mezőn állsz. Nyugatra egy hatalmas kastélyt, délre egy kutat látsz.
-Napfényes mezőn állsz, egy kút előtt. Itt van: pénz. Nyugatra egy hatalmas kastélyt látsz.
-Rendben, a pénzt elraktad.
-A várudvaron állsz. Nyugatra nyitott kamrát, északra zárt ajtót látsz. Egy széles lépcső vezet fel a vártemplomhoz.
-A templom előtt egy kéregető szerzetes mosolyog rád. Nyugatra nyitott kamrát, északra zárt ajtót látsz
-A szerzetes megköszöni, és kinyújtja feléd a kezét, a tenyerén egy kulcsot tart.
-Rendben, a kulcsot elraktad 
-A kamrában vagy. Egyik oldalon hatalmas asztal áll mindenféle ételekkel, a másik oldalon egy nagy tűzhely, szintén ételekkel. Délre egy faajtót látsz.
-Egy faajtó előtt állsz, zárva van, A kulcslyukon nem lehet belátni.
-Az ajtó könnyedén nyílik, egy kis ládikát pont fel tudsz kapni, amikor visszakerülsz a jelenbe!
-Újra életerősnek érzed magad! 
-Egy masszív, zárt ajtó előtt állsz.
-Ezt az ajtót nem nyitja a kulcsod!
+1;kezdés;0;-1;-;Egy óriási mezőn vagy. Nyugat felé egy hatalmas épület körvonalai tűnnek fel.
+2;mező;0;-1;-;Napfényes mezőn állsz. Nyugatra egy hatalmas kastélyt, délre egy kutat látsz.
+3;kút;0;-1;-;pénz;Napfényes mezőn állsz, egy kút előtt. Nyugatra egy hatalmas kastélyt látsz.
+5;kastély;0;-1;-;A várudvaron állsz. Nyugatra nyitott kamrát, északra zárt ajtót látsz. Egy széles lépcső vezet fel a vártemplomhoz.
+6;vártemplom;0;-1;-;A templom előtt egy kéregető szerzetes mosolyog rád. Nyugatra nyitott kamrát, északra zárt ajtót látsz
+7;szerzetes;1;1;ad pénz;A szerzetes megköszöni, és kinyújtja feléd a kezét, a tenyerén egy kulcsot tart.
+9;kamra;0;-1;-;A kamrában vagy. Egyik oldalon hatalmas asztal áll mindenféle ételekkel, a másik oldalon egy nagy tűzhely, szintén ételekkel. Délre egy faajtót látsz.
+10;faajtó;0;-1;;Egy faajtó előtt állsz, zárva van, A kulcslyukon nem lehet belátni.
+11;nyerőszéria;1;1;használ kulcs;Az ajtó könnyedén nyílik, egy kis ládikát pont fel tudsz kapni, amikor visszakerülsz a jelenbe!
+12;evés;1;-1;eszik étel;Újra életerősnek érzed magad! 
+13;ajtó;0;-1;;Egy masszív, zárt ajtó előtt állsz.
+14;VolksWagen... Das Auto!;1;-1;;Ezt az ajtót nem nyitja a kulcsod!
+4;pénz;1;-1;felvesz pénz;Rendben, a pénzt elraktad.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+8;kulcs;1;-1;felvesz kulcs;Rendben, a kulcsot elraktad !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

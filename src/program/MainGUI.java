@@ -3,7 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package program;
-
+import static java.lang.Thread.yield;
+import java.util.List;
 /**
  *
  * @author SzabóRoland(SZF_2023
@@ -13,19 +14,51 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
     /**
      * Creates new form MainGUI
      */
+    int ehe = 0;
     public MainGUI() {
         initComponents();
         Pr_eletero.setMaximum(Idoregesz.getMaxEletero());
         Idoregesz.addListener(this);
+        Idoregesz.Restart(true);
     }
     
+    @Override
     public void charachterUpdate(){
-        La_eletero.setText(String.valueOf(Idoregesz.getEletero()));
         Pr_eletero.setValue(Idoregesz.getEletero());
-        //La_output.setText(Idoregesz.getLeiras());
-        System.out.println("Pisztácia elfogyott, vanillia nem is volt.");
+        La_eletero.setText(String.valueOf(Idoregesz.getEletero()));
+        La_hiba.setText(getListToTextForJLabel(new String[]{""}));
+        La_talal.setText(getListToTextForJLabel(new String[]{""}));
+        La_inventory.setText(getListToTextForJLabel(new String[]{""}));
+        
+        La_output.setText("<html>"+Idoregesz.getLeiras()+"</html>");
+        System.out.println(String.format("%d. Pisztácia elfogyott, vanillia nem is volt.", ehe));
+        ehe++;
+    }
+    
+    private void Command(){
+        if(Idoregesz.Command(Tf_input.getText().split(" "))){
+           //La_hiba
+           Tf_input.setText("");
+        }
+        else{
+            //La_hiba.setText("<html>Hiba: Ez a parancs nem elfogadott!</html>");
+        }
     }
 
+    private String getListToTextForJLabel(String[] l){
+        String s = "<html>";
+        for (String item : l){
+            s += item + "<br>";
+        } s+="</html>";
+        return s;
+    }
+    private String getListToText(String[] l){
+        String s = "";
+        for (String item : l){
+            s += item + "\n";
+        }
+       return s;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -45,7 +78,9 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
         Tf_input = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        La_targyak = new javax.swing.JLabel();
+        La_inventory = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        La_talal = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -63,12 +98,14 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
         );
 
         La_output.setBackground(new java.awt.Color(255, 255, 51));
-        La_output.setText("Output");
+        La_output.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        La_output.setText("<html>A főnév és helyszín szavak a leírásokban lesznek megtalálhatóak, arra kell figyelni, ha egy adott helyszínen van felvehető tárgy, akkor felvétele után az nem lesz ott, csak a felszereléseink között. Kivéve az étel, az mindig ott marad! Amikor megfelelő helyen használtuk a tárgyat, akkor az a felszerelések közül eltűnhet, de pl. egy kulcs vissza is kerülhet a felszerelések közé.</html>");
         La_output.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        La_output.setAutoscrolls(true);
+        La_output.setMaximumSize(new java.awt.Dimension(200, 160));
 
         La_hiba.setBackground(new java.awt.Color(204, 204, 204));
         La_hiba.setForeground(new java.awt.Color(255, 51, 51));
+        La_hiba.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         La_hiba.setText("Hiba");
         La_hiba.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -87,12 +124,24 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
             }
         });
 
+        Tf_input.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                Tf_inputKeyPressed(evt);
+            }
+        });
+
         jLabel1.setText("Életerő:");
 
-        jLabel2.setText("Tárgyak:");
+        jLabel2.setText("Eszköztár:");
 
-        La_targyak.setText("Minta");
-        La_targyak.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        La_inventory.setText("Minta");
+        La_inventory.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        jLabel4.setText("Itt van:");
+
+        La_talal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        La_talal.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        La_talal.setAutoscrolls(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -107,8 +156,8 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
                             .addComponent(jLabel2))
                         .addGap(113, 113, 113)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(La_output, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(Tf_input, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)))
+                            .addComponent(La_output, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                            .addComponent(Tf_input, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -118,14 +167,17 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
                                 .addComponent(Pr_eletero, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(32, 32, 32)
-                                .addComponent(La_targyak, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(La_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Bt_send)
                     .addComponent(La_hiba, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(La_talal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Bt_send, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -134,12 +186,11 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(La_targyak, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(La_inventory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -150,11 +201,15 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
                             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(La_output, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(La_hiba, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(La_hiba, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(La_talal, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Bt_send)
                     .addComponent(Tf_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -165,8 +220,14 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
     }// </editor-fold>//GEN-END:initComponents
 
     private void Bt_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Bt_sendActionPerformed
-        Idoregesz.Command(Tf_input.getText().split(" "));
+        this.Command();
     }//GEN-LAST:event_Bt_sendActionPerformed
+
+    private void Tf_inputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Tf_inputKeyPressed
+        if('\n' == evt.getKeyChar()){
+            this.Command();
+        }
+    }//GEN-LAST:event_Tf_inputKeyPressed
 
     /**
      * @param args the command line arguments
@@ -207,13 +268,15 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
     private javax.swing.JButton Bt_send;
     private javax.swing.JLabel La_eletero;
     private javax.swing.JLabel La_hiba;
+    private javax.swing.JLabel La_inventory;
     private javax.swing.JLabel La_output;
-    private javax.swing.JLabel La_targyak;
+    private javax.swing.JLabel La_talal;
     private javax.swing.JProgressBar Pr_eletero;
     private javax.swing.JTextField Tf_input;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
