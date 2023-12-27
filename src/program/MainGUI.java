@@ -3,13 +3,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package program;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import static java.lang.Thread.yield;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 /**
  *
  * @author SzabóRoland(SZF_2023
  */
-public class MainGUI extends javax.swing.JFrame  implements EI.charachterListener{
+public class MainGUI extends javax.swing.JFrame implements EI.charachterListener{
 
     /**
      * Creates new form MainGUI
@@ -20,6 +31,9 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
         Pr_eletero.setMaximum(Idoregesz.getMaxEletero());
         Idoregesz.addListener(this);
         Idoregesz.Restart(true);
+        this.getContentPane().setBackground( Color.ORANGE );
+        La_output.setOpaque(true);
+        La_output.setBackground(Color.CYAN);
     }
     
     @Override
@@ -30,7 +44,28 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
         La_talal.setText(getListToTextForJLabel(new String[]{""}));
         La_inventory.setText(getListToTextForJLabel(new String[]{""}));
         
-        La_output.setText("<html>"+Idoregesz.getLeiras()+"</html>");
+        //Kép
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        //System.out.println(s);
+        File f = new File(s + "\\" + Idoregesz.getKep());
+        System.out.println(f.getPath());
+        if(f.exists()){
+            
+            
+            try {
+                BufferedImage wPic = ImageIO.read(f);
+                System.out.println("Geci.");
+                Image img = wPic.getScaledInstance(309, 215, Image.SCALE_DEFAULT);
+                ImageIcon ic = new ImageIcon(img);
+                La_kep.setIcon(ic);
+               
+            } catch (Exception e) {
+                System.out.println("Kurva anyád!");
+            }
+        }
+        
+        La_output.setText("<html><p style=\"padding: 3px 1px 3px 5px;\">"+Idoregesz.getLeiras()+"</p></html>");
         System.out.println(String.format("%d. Pisztácia elfogyott, vanillia nem is volt.", ehe));
         ehe++;
     }
@@ -68,7 +103,8 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        Pa_kep = new javax.swing.JPanel();
+        La_kep = new javax.swing.JLabel();
         La_output = new javax.swing.JLabel();
         La_hiba = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -83,25 +119,37 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
         La_talal = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 153, 0));
+        setResizable(false);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        Pa_kep.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        Pa_kep.setMaximumSize(new java.awt.Dimension(309, 215));
+        Pa_kep.setMinimumSize(new java.awt.Dimension(309, 215));
+        Pa_kep.setPreferredSize(new java.awt.Dimension(309, 215));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        La_kep.setMaximumSize(new java.awt.Dimension(309, 215));
+        La_kep.setMinimumSize(new java.awt.Dimension(309, 215));
+        La_kep.setPreferredSize(new java.awt.Dimension(309, 215));
+
+        javax.swing.GroupLayout Pa_kepLayout = new javax.swing.GroupLayout(Pa_kep);
+        Pa_kep.setLayout(Pa_kepLayout);
+        Pa_kepLayout.setHorizontalGroup(
+            Pa_kepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(La_kep, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 212, Short.MAX_VALUE)
+        Pa_kepLayout.setVerticalGroup(
+            Pa_kepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Pa_kepLayout.createSequentialGroup()
+                .addComponent(La_kep, javax.swing.GroupLayout.PREFERRED_SIZE, 209, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        La_output.setBackground(new java.awt.Color(255, 255, 51));
+        La_output.setBackground(new java.awt.Color(153, 255, 255));
         La_output.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         La_output.setText("<html>A főnév és helyszín szavak a leírásokban lesznek megtalálhatóak, arra kell figyelni, ha egy adott helyszínen van felvehető tárgy, akkor felvétele után az nem lesz ott, csak a felszereléseink között. Kivéve az étel, az mindig ott marad! Amikor megfelelő helyen használtuk a tárgyat, akkor az a felszerelések közül eltűnhet, de pl. egy kulcs vissza is kerülhet a felszerelések közé.</html>");
         La_output.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         La_output.setMaximumSize(new java.awt.Dimension(200, 160));
+        La_output.setOpaque(true);
 
         La_hiba.setBackground(new java.awt.Color(204, 204, 204));
         La_hiba.setForeground(new java.awt.Color(255, 51, 51));
@@ -154,10 +202,8 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
-                        .addGap(113, 113, 113)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(La_output, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                            .addComponent(Tf_input, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)))
+                        .addGap(106, 106, 106)
+                        .addComponent(Tf_input, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -169,15 +215,16 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
                                 .addGap(32, 32, 32)
                                 .addComponent(La_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(La_output, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(Pa_kep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(La_hiba, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(La_talal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Bt_send, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(Bt_send)
+                    .addComponent(La_hiba, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                    .addComponent(La_talal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -198,7 +245,7 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
                                         .addComponent(jLabel1))
                                     .addComponent(Pr_eletero, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(8, 8, 8))
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(Pa_kep, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(La_output, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -269,14 +316,15 @@ public class MainGUI extends javax.swing.JFrame  implements EI.charachterListene
     private javax.swing.JLabel La_eletero;
     private javax.swing.JLabel La_hiba;
     private javax.swing.JLabel La_inventory;
+    private javax.swing.JLabel La_kep;
     private javax.swing.JLabel La_output;
     private javax.swing.JLabel La_talal;
+    private javax.swing.JPanel Pa_kep;
     private javax.swing.JProgressBar Pr_eletero;
     private javax.swing.JTextField Tf_input;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

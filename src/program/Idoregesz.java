@@ -41,7 +41,7 @@ public class Idoregesz {
     // Paraméterek:Karakter
     private static int eletero = 10;
     private static int maxEletero = 10;
-    //private static List<String> targyak;
+    private static List<String> hibak;
     private static int ugrasSzam = 0;
     private static String leiras;
     
@@ -58,10 +58,13 @@ public class Idoregesz {
             targyak.clear();
             //Helyszín
             int i = 0;
-            for(String item : uploadList("helyszinek.txt")){
+            for(String item : uploadList("helyszin.txt")){
                 try {
                     String[] sp = item.split(";");
-                    helyszinek.add(new Helyszin(Integer.parseInt(sp[0]), sp[1], Byte.parseByte(sp[2]), Integer.parseInt(sp[3]), sp[4], sp[5])); 
+                    helyszinek.add(new Helyszin(Integer.parseInt(sp[0]), sp[1], 
+                            Integer.parseInt(sp[2]) == 1, Integer.parseInt(sp[3]) == 1, 
+                            Integer.parseInt(sp[4]) == 1, Integer.parseInt(sp[5]),
+                            Byte.parseByte(sp[6]) ,sp[7], sp[8])); 
                 } catch (Exception e) {
                     System.out.println(String.format("A helyszinek.txt fájl %d. sorával probléma akadt.", i));
                 }
@@ -91,7 +94,7 @@ public class Idoregesz {
                 i++;
             }
         }
-        /*for(Helyszin item: helyszinek){
+       /* for(Helyszin item: helyszinek){
             System.out.println(String.format("%d%s%s", item.getID(), item.getNev(), item.getLeiras()));
         }*/
         leiras = helyszinek.stream()
@@ -107,6 +110,7 @@ public class Idoregesz {
         try(Scanner sc = new Scanner(f)){
             for(int i=0; sc.hasNextLine(); i++){
                 items.add(sc.nextLine());
+                //System.out.println(items.get(i).toString());
             }
             sc.close();
         } catch (FileNotFoundException ex) {
@@ -127,10 +131,19 @@ public class Idoregesz {
             case "megy":
                 if(eletero > 0){
                     List<Utvonal> idg = utvonalak.stream().filter(x -> x.getStartID() == aktualisHelyszin).toList();
-                    aktualisHelyszin = idg.stream()
+                    try {
+                        aktualisHelyszin = idg.stream()
                             .filter(x -> x.getEgtaj().toLowerCase().equals(args[1].toLowerCase()))
                             .findFirst().get().getCelID();
-                    leiras = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get().getLeiras();
+                        leiras = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get().getLeiras();
+                        ugrasSzam++;
+                        if(ugrasSzam > 2){
+                            eletero--;
+                        }
+                    } catch (Exception e) {
+                        hibak.add("HIBA: Ebbe az irányba nem mehetsz!");
+                    }
+                    
                     // életerőcsökkentés, ha helyszínváltás történt
                 }
                 else{
@@ -138,15 +151,12 @@ public class Idoregesz {
                 }
                 //Helyszin.mutat átnézése
                 break;
-            case "ad":
-            case "használ":
-                // rendelkezésre áll a tárgy?
-                break;
             case "felvesz":
                 if(true){
                     leiras = String.format("Rendben, a következő tárgyat felvetted: %s", "");                }
                 break;
             default:
+                //Helyszin dönt, ad-e, vagy nem
                 break;
         }
         if (args.length > 1 && testCheck()){
@@ -169,47 +179,59 @@ public class Idoregesz {
     }
     public static List<Targy> getTargyak(){
         return targyak;
-    } 
+    }
+    
     public static String getLeiras(){
         return leiras;
+    }
+    
+    public static String getKep(){
+        return helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get().getKep();
     }
 }
 
 class Helyszin{
     private int id;
     private String nev;
+    private String pathImage;
     private String leiras;
-    private String megkozelitesiFeltetel;
     
     private int megkozelites = 0;
     private int maxMegkozelites;
-    private byte zart;
-    
     private int eleteroAr;
-    private String[] targyAr;
+    private boolean zart; // Útvonalon keresztül nem megközelíthető
+    private boolean nevZart;
+    private boolean korlatlanMegkozelites;
+    
+    
     // private List<String> talaltTargyak;
     
     
     
-   public Helyszin(int id, String nev, byte zart, int maxMegkozelites, String megkozelitesiFeltetel, String leiras){
-       this.megkozelites = 0;
-       
+   public Helyszin(int id, String nev, boolean zart, boolean nevZart, boolean korlatlanMegkoz, 
+           int maxMegkoz, byte adEletero, String pathImage, String leiras){ 
        this.id = id;
        this.nev = nev;
+       this.pathImage = pathImage;
        this.leiras = leiras;
        
-       this.megkozelitesiFeltetel = megkozelitesiFeltetel;
-       this.maxMegkozelites = maxMegkozelites;
-       this.zart = zart;
-        
+        this.megkozelites = 0;
+        this.maxMegkozelites = maxMegkozelites;
+        this.eleteroAr = eleteroAr;
+        this.zart = zart;
+        this.nevZart = nevZart;
     }
     
     public boolean megy(){
-        megkozelites++;
-        return false;
+        boolean both = false;
+        if((maxMegkozelites < 0 || maxMegkozelites - megkozelites > 0) && !zart){
+            both = true;
+            megkozelites++;
+        }
+        return both;
     }
     
-    public boolean megkozelites(String feltetel){
+    public boolean mFeltetel(String feltetel){
         return false;
     }
     
@@ -223,12 +245,15 @@ class Helyszin{
     public String getLeiras(){
         return leiras;
     }
+    public String getKep(){
+        return pathImage;
+    }
    /* public List<String> getTargyak(){
         return talaltTargyak;
     }*/
-    public String getMegkozelitesiFeltetel(){
+   /* public String getMegkozelitesiFeltetel(){
         return megkozelitesiFeltetel;
-    }
+    }*/
 }
 
 class Utvonal{
@@ -275,7 +300,31 @@ class Talal{
 }
 
 class Tortenhet{
+    
+    
+    
+    
+    public Tortenhet(int maxMegkozelites, boolean zart, boolean nevZart, int eleteroAr){
+       
+    }
+    
+    
+}
 
+class Feltetel{
+    private String megkozelitesiFeltetel;
+    
+    public Feltetel(String megkozelitesiFeltetel){
+        this.megkozelitesiFeltetel = megkozelitesiFeltetel;
+    }
+    
+    public String getMegkozelitesiFeltetel(){
+        return megkozelitesiFeltetel;
+    }
+    
+    public boolean testFeltetel(String feltetel){
+        return megkozelitesiFeltetel.equals(feltetel);
+    }
 }
 
 

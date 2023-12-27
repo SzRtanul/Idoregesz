@@ -1,0 +1,12 @@
+1;kezdés;0;-1;-1;-1;0;kepek\01_kezdes.png;Egy óriási mezőn vagy. Nyugat felé egy hatalmas épület körvonalai tűnnek fel.
+2;mező;0;0;-1;-1;0;kepek\02_mezo.png;Napfényes mezőn állsz. Nyugatra egy hatalmas kastélyt, délre egy kutat látsz.
+3;kút;0;0;-1;-1;0;kepek\03_kut.png;Napfényes mezőn állsz, egy kút előtt. Nyugatra egy hatalmas kastélyt látsz. Itt van: pénz
+5;Kastély;0;0;-1;-1;0;kepek\05_kastely.png;A várudvaron állsz. Nyugatra nyitott kamrát, északra zárt ajtót látsz. Egy széles lépcső vezet fel a vártemplomhoz.
+6;Vártemplom;0;0;-1;-1;0;kepek\06_szerzetes.png;A templom előtt egy kéregető szerzetes mosolyog rád. Nyugatra nyitott kamrát, északra zárt ajtót látsz
+7;szerzetes;-1;-1;0;1;0;-;A szerzetes megköszöni, és kinyújtja feléd a kezét, a tenyerén egy kulcsot tart.
+9;kamra;0;0;-1;-1;0;kepek\09_kamra.png;A kamrában vagy. Egyik oldalon hatalmas asztal áll mindenféle ételekkel, a másik oldalon egy nagy tűzhely, szintén ételekkel. Délre egy faajtót látsz.
+10;faajtó;0;0;-1;-1;0;kepek\10_faajto.png;Egy faajtó előtt állsz, zárva van, A kulcslyukon nem lehet belátni.
+11;nyerőszéria;-1;-1;0;-1;0;-;Az ajtó könnyedén nyílik, egy kis ládikát pont fel tudsz kapni, amikor visszakerülsz a jelenbe!
+12;evés;-1;-1;-1;-1;10;-;Újra életerősnek érzed magad!
+13;ajtó;0;0;-1;-1;0;-;Egy masszív, zárt ajtó előtt állsz.
+14;VolksWagen... Das Auto!;-1;-1;-1;-1;0;kepek\14_ajto.png;Ezt az ajtót nem nyitja a kulcsod!
