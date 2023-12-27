@@ -1,0 +1,5 @@
+7;ad pénz
+11;Használ kulcs
+12;Eszik étel
+14;Használ kulcs
+14;Vizsgál ajtó

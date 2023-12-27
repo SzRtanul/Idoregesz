@@ -38,6 +38,9 @@ public class Idoregesz {
     private static List<Helyszin> helyszinek = new ArrayList<Helyszin>();
     private static List<Utvonal> utvonalak = new ArrayList<Utvonal>();
     private static List<Targy> targyak = new ArrayList<Targy>();
+    private static List<TargyAr> targyar = new ArrayList<TargyAr>();
+    private static List<Feltetel> feltetelek = new ArrayList<Feltetel>();
+    private static List<Talal> talal = new ArrayList<Talal>();
     // Paraméterek:Karakter
     private static int eletero = 10;
     private static int maxEletero = 10;
@@ -85,6 +88,36 @@ public class Idoregesz {
             // Tárgy
             i=0;
             for(String item : uploadList("targyak.txt")){
+                try {
+                    String[] sp = item.split(";");
+                    targyak.add(new Targy(Integer.parseInt(sp[0]), sp[1])); 
+                } catch (Exception e) {
+                    System.out.println(String.format("A targyak.txt fájl %d. sorával probléma akadt.", i));
+                }
+                i++;
+            }
+            // TargyAr
+            for(String item : uploadList("targyar.txt")){
+                try {
+                    String[] sp = item.split(";");
+                    targyar.add(new TargyAr(Integer.parseInt(sp[0]), Integer.parseInt(sp[1]), Integer.parseInt(sp[2]))); 
+                } catch (Exception e) {
+                    System.out.println(String.format("A targyak.txt fájl %d. sorával probléma akadt.", i));
+                }
+                i++;
+            }
+            // Feltetel
+            for(String item : uploadList("feltetelek.txt")){
+                try {
+                    String[] sp = item.split(";");
+                    feltetelek.add(new Feltetel(Integer.parseInt(sp[0]), sp[1])); 
+                } catch (Exception e) {
+                    System.out.println(String.format("A targyak.txt fájl %d. sorával probléma akadt.", i));
+                }
+                i++;
+            }
+            // Talal
+            for(String item : uploadList("talal.txt")){
                 try {
                     String[] sp = item.split(";");
                     //helyszinek.add(new Helyszin(Integer.parseInt(sp[0]), sp[1], Byte.parseByte(sp[2]), Integer.parseInt(sp[3]), sp[4], sp[5])); 
@@ -135,11 +168,10 @@ public class Idoregesz {
                         aktualisHelyszin = idg.stream()
                             .filter(x -> x.getEgtaj().toLowerCase().equals(args[1].toLowerCase()))
                             .findFirst().get().getCelID();
-                        leiras = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get().getLeiras();
-                        ugrasSzam++;
-                        if(ugrasSzam > 2){
-                            eletero--;
-                        }
+                        Helyszin hly = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get();
+                        if(hly.megy()){
+                            setHelyszin();
+                        }   
                     } catch (Exception e) {
                         hibak.add("HIBA: Ebbe az irányba nem mehetsz!");
                     }
@@ -152,10 +184,31 @@ public class Idoregesz {
                 //Helyszin.mutat átnézése
                 break;
             case "felvesz":
+               
                 if(true){
                     leiras = String.format("Rendben, a következő tárgyat felvetted: %s", "");                }
                 break;
             default:
+                Helyszin hly = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get();
+                String s = "";
+                for(String item : args){
+                    s += item+ " ";
+                }
+                StringBuffer sb = new StringBuffer(s);
+                sb.deleteCharAt(s.length() - 1);
+                List<Utvonal> utv = utvonalak.stream()
+                        .filter(x -> x.getStartID() == aktualisHelyszin).toList();
+                //System.out.println("" + );
+                Feltetel felt = feltetelek.stream()
+                        .filter(x -> x.getMegkozelitesiFeltetel().toLowerCase().equals(sb.toString().toLowerCase())).findFirst().get();
+                for (Utvonal item : utv){
+                    if(item.getCelID() == felt.getHelyszinID()){
+                        System.out.println(item.getCelID() == felt.getHelyszinID());
+                        aktualisHelyszin = item.getCelID();
+                        setHelyszin();
+                        break;
+                    }
+                }
                 //Helyszin dönt, ad-e, vagy nem
                 break;
         }
@@ -166,8 +219,20 @@ public class Idoregesz {
         return false;
     }
     
-    private boolean setHelyszin(){
+    private static boolean setHelyszin(){
+        Helyszin hly = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get();
         // aktualisHelyszin = helyszinek.get(aktualisHelyszin);
+        leiras = hly.getLeiras();
+        setEletero(hly.getAdEletero());
+        ugrasSzam++;
+        if(ugrasSzam > 2){
+            eletero--;
+        }
+        return false;
+    }
+    
+    private static boolean setEletero(int adEletero){
+        eletero += eletero + adEletero > maxEletero ? maxEletero : eletero + adEletero;
         return false;
     }
     // Lekérdezés függvények
@@ -215,9 +280,10 @@ class Helyszin{
        this.pathImage = pathImage;
        this.leiras = leiras;
        
-        this.megkozelites = 0;
-        this.maxMegkozelites = maxMegkozelites;
-        this.eleteroAr = eleteroAr;
+       this.korlatlanMegkozelites = korlatlanMegkoz;
+       this.megkozelites = 0;
+        this.maxMegkozelites = maxMegkoz;
+        this.eleteroAr = adEletero;
         this.zart = zart;
         this.nevZart = nevZart;
     }
@@ -248,6 +314,10 @@ class Helyszin{
     public String getKep(){
         return pathImage;
     }
+    
+    public int getAdEletero(){
+        return eleteroAr;
+    }
    /* public List<String> getTargyak(){
         return talaltTargyak;
     }*/
@@ -257,9 +327,9 @@ class Helyszin{
 }
 
 class Utvonal{
-    int startID = -1;
-    int celID = -1;
-    String egtaj;
+    private int startID = -1;
+    private int celID = -1;
+    private String egtaj;
     
     public Utvonal(int start, int cel, String egtaj){
         this.startID = start;
@@ -286,6 +356,14 @@ class Targy{
         this.id = id;
         this.nev = nev;
     }
+    
+    public int getID(){
+        return id;
+    }
+    
+    public String getNev(){
+        return nev;
+    }
 }
 class Talal{
     int helyszinID;
@@ -297,25 +375,39 @@ class Talal{
         this.targyID = targyID;
         this.menny = menny;
     }
-}
-
-class Tortenhet{
     
-    
-    
-    
-    public Tortenhet(int maxMegkozelites, boolean zart, boolean nevZart, int eleteroAr){
-       
+    public int getHelyszinID(){
+        return helyszinID;
     }
     
+    public int getTargyID(){
+        return targyID;
+    }
     
+    public int getMenny(){
+        return menny;
+    }
+    
+    public boolean Felvesz(){
+        boolean both = false;
+        if(menny -1 >= 0){
+            menny--;
+        }
+        return both;
+    }
 }
 
 class Feltetel{
+    private int helyszinID;
     private String megkozelitesiFeltetel;
     
-    public Feltetel(String megkozelitesiFeltetel){
+    public Feltetel(int helyszinID, String megkozelitesiFeltetel){
+        this.helyszinID = helyszinID;
         this.megkozelitesiFeltetel = megkozelitesiFeltetel;
+    }
+    
+    public int getHelyszinID(){
+        return helyszinID;
     }
     
     public String getMegkozelitesiFeltetel(){
@@ -324,6 +416,18 @@ class Feltetel{
     
     public boolean testFeltetel(String feltetel){
         return megkozelitesiFeltetel.equals(feltetel);
+    }
+}
+
+class TargyAr{
+    private int helyszinID;
+    private int targyID;
+    private int ar;
+    
+    public TargyAr(int helyszinID, int targyID, int ar){
+        this.helyszinID = helyszinID;
+        this.targyID = targyID;
+        this.ar = ar;
     }
 }
 
