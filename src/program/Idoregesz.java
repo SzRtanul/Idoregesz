@@ -7,6 +7,7 @@ package program;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -35,12 +36,14 @@ public class Idoregesz {
     // </editor-fold>
     // Paraméterek
     static int aktualisHelyszin = 1;
+    private static List<InventoryItem> eszkoztar = new ArrayList<InventoryItem>();
     private static List<Helyszin> helyszinek = new ArrayList<Helyszin>();
     private static List<Utvonal> utvonalak = new ArrayList<Utvonal>();
     private static List<Targy> targyak = new ArrayList<Targy>();
     private static List<TargyAr> targyar = new ArrayList<TargyAr>();
     private static List<Feltetel> feltetelek = new ArrayList<Feltetel>();
     private static List<Talal> talal = new ArrayList<Talal>();
+    
     // Paraméterek:Karakter
     private static int eletero = 10;
     private static int maxEletero = 10;
@@ -56,9 +59,13 @@ public class Idoregesz {
         ugrasSzam = 0;
         if(reupload) 
         {
+            eszkoztar.clear();
             helyszinek.clear();
             utvonalak.clear();
             targyak.clear();
+            targyar.clear();
+            feltetelek.clear();
+            talal.clear();
             //Helyszín
             int i = 0;
             for(String item : uploadList("helyszin.txt")){
@@ -184,7 +191,22 @@ public class Idoregesz {
                 //Helyszin.mutat átnézése
                 break;
             case "felvesz":
-               
+                List<Talal> tl = talal.stream().filter(x -> x.getHelyszinID() == aktualisHelyszin).toList();
+                List<Targy> tr = targyak.stream().filter(x -> x.getNev().toLowerCase() == args[1].toLowerCase()).toList();
+                
+                for (Talal item : tl){
+                    for (Targy item2 : tr){
+                        if(item.getTargyID() == item2.getID()){
+                            if(item.Felvesz()){
+                                if(eszkoztar.stream().filter(x -> x.getTargyID() == item.getTargyID()).count() == 0){
+                                    eszkoztar.add(new InventoryItem(item.getTargyID()));
+                                }
+                                eszkoztar.stream().filter(x -> x.getTargyID() == item2.getID()).findFirst().get().ad(1);
+                                break;
+                            }
+                        }
+                    }
+                }
                 if(true){
                     leiras = String.format("Rendben, a következő tárgyat felvetted: %s", "");                }
                 break;
@@ -242,8 +264,25 @@ public class Idoregesz {
     public static int getMaxEletero(){
         return maxEletero;
     }
-    public static List<Targy> getTargyak(){
-        return targyak;
+    public static String[] getEszkoztarGUI(){
+        List<String> st = new ArrayList<String>();
+        for (InventoryItem item : eszkoztar){
+            Targy t = targyak.stream().filter(x-> x.getID() == item.getTargyID()).findFirst().get();
+            st.add(t.getNev() + ": " + item.getMenny());
+        }
+        String[] starr = Arrays.copyOf(st.toArray(), st.toArray().length, String[].class);
+        return starr;
+    }
+    
+    public static String[] getTalal(){
+        List<String> st = new ArrayList<String>();
+        List<Talal> tl = talal.stream().filter(x -> x.getHelyszinID() == aktualisHelyszin).toList();
+        for(Talal item : tl){
+            st.add(targyak.stream().filter(x -> x.getID() == item.getTargyID()).findFirst().get().getNev() + ": " + item.getMenny());
+        }
+        String[] starr = Arrays.copyOf(st.toArray(), st.toArray().length, String[].class);
+        System.out.println(starr);
+        return starr;
     }
     
     public static String getLeiras(){
@@ -252,6 +291,34 @@ public class Idoregesz {
     
     public static String getKep(){
         return helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get().getKep();
+    }
+}
+
+class InventoryItem{
+    private int targyID;
+    private int menny;
+    
+    public InventoryItem(int targyID){
+        this.menny = 0;
+        this.targyID = targyID;
+    }
+    
+    public int getTargyID(){
+        return targyID;
+    }
+    
+    public int getMenny(){
+        return menny;
+    }
+    
+    public boolean ad(int menny){
+        boolean both = false;
+        if(this.menny + menny >= 0){
+            this.menny += menny;
+            both = true;
+        }
+        return both;
+        
     }
 }
 
@@ -349,8 +416,8 @@ class Utvonal{
 }
 
 class Targy{
-    int id;
-    String nev;
+    private int id;
+    private String nev;
     
     public Targy(int id, String nev){
         this.id = id;
@@ -366,9 +433,9 @@ class Targy{
     }
 }
 class Talal{
-    int helyszinID;
-    int targyID;
-    int menny;
+    private int helyszinID;
+    private int targyID;
+    private int menny;
         
     public Talal(int helyszinID, int targyID, int menny){
         this.helyszinID = helyszinID;
@@ -392,6 +459,7 @@ class Talal{
         boolean both = false;
         if(menny -1 >= 0){
             menny--;
+            both = true;
         }
         return both;
     }

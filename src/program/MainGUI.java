@@ -41,8 +41,8 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         Pr_eletero.setValue(Idoregesz.getEletero());
         La_eletero.setText(String.valueOf(Idoregesz.getEletero()));
         La_hiba.setText(getListToTextForJLabel(new String[]{""}));
-        La_talal.setText(getListToTextForJLabel(new String[]{""}));
-        La_inventory.setText(getListToTextForJLabel(new String[]{""}));
+        La_talal.setText(getListToTextForJLabel(Idoregesz.getTalal()));
+        La_inventory.setText(getListToTextForJLabel(Idoregesz.getEszkoztarGUI()));
         
         //Kép
         Path currentRelativePath = Paths.get("");
