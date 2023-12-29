@@ -18,36 +18,33 @@ import java.util.Set;
  */
 public class Idoregesz {
     
-     // <editor-fold defaultstate="collapsed" desc="Event implmentation">
-    
+     // <editor-fold defaultstate="collapsed" desc="Event implmentation"> 
     private static Set<EI.charachterListener> listeners = new HashSet();
-    
     public static void addListener(EI.charachterListener listener) {
         listeners.add(listener);
     }
-    
     public static void removeListener(EI.charachterListener listener) {
         listeners.remove(listener);
     }
-    
     private static void update(){
        listeners.forEach(x -> x.charachterUpdate());
     }
     // </editor-fold>
     // Paraméterek
     static int aktualisHelyszin = 1;
-    private static List<InventoryItem> eszkoztar = new ArrayList<InventoryItem>();
-    private static List<Helyszin> helyszinek = new ArrayList<Helyszin>();
-    private static List<Utvonal> utvonalak = new ArrayList<Utvonal>();
-    private static List<Targy> targyak = new ArrayList<Targy>();
-    private static List<TargyAr> targyar = new ArrayList<TargyAr>();
-    private static List<Feltetel> feltetelek = new ArrayList<Feltetel>();
-    private static List<Talal> talal = new ArrayList<Talal>();
+    private final static List<InventoryItem> eszkoztar = new ArrayList<InventoryItem>();
+    private final static List<String> hibak = new ArrayList<String>();
+    
+    private final static List<Helyszin> helyszinek = new ArrayList<Helyszin>();
+    private final static List<Utvonal> utvonalak = new ArrayList<Utvonal>();
+    private final static List<Targy> targyak = new ArrayList<Targy>();
+    private final static List<TargyAr> targyar = new ArrayList<TargyAr>();
+    private final static List<Feltetel> feltetelek = new ArrayList<Feltetel>();
+    private final static List<Talal> talal = new ArrayList<Talal>();
     
     // Paraméterek:Karakter
     private static int eletero = 10;
     private static int maxEletero = 10;
-    private static List<String> hibak;
     private static int ugrasSzam = 0;
     private static String leiras;
     
@@ -107,9 +104,10 @@ public class Idoregesz {
             for(String item : uploadList("targyar.txt")){
                 try {
                     String[] sp = item.split(";");
-                    targyar.add(new TargyAr(Integer.parseInt(sp[0]), Integer.parseInt(sp[1]), Integer.parseInt(sp[2]))); 
+                    targyar.add(new TargyAr(Integer.parseInt(sp[0]), Integer.parseInt(sp[1]), Integer.parseInt(sp[2]), Byte.parseByte(sp[3]) == 1)); 
                 } catch (Exception e) {
-                    System.out.println(String.format("A targyak.txt fájl %d. sorával probléma akadt.", i));
+                    
+                    System.out.println(String.format("A targyar.txt fájl %d. sorával probléma akadt.", i));
                 }
                 i++;
             }
@@ -119,7 +117,7 @@ public class Idoregesz {
                     String[] sp = item.split(";");
                     feltetelek.add(new Feltetel(Integer.parseInt(sp[0]), sp[1])); 
                 } catch (Exception e) {
-                    System.out.println(String.format("A targyak.txt fájl %d. sorával probléma akadt.", i));
+                    System.out.println(String.format("A feltetelek.txt fájl %d. sorával probléma akadt.", i));
                 }
                 i++;
             }
@@ -127,9 +125,9 @@ public class Idoregesz {
             for(String item : uploadList("talal.txt")){
                 try {
                     String[] sp = item.split(";");
-                    //helyszinek.add(new Helyszin(Integer.parseInt(sp[0]), sp[1], Byte.parseByte(sp[2]), Integer.parseInt(sp[3]), sp[4], sp[5])); 
+                    talal.add(new Talal(Integer.parseInt(sp[0]), Integer.parseInt(sp[1]), Integer.parseInt(sp[2]))); 
                 } catch (Exception e) {
-                    System.out.println(String.format("A targyak.txt fájl %d. sorával probléma akadt.", i));
+                    System.out.println(String.format("A talal.txt fájl %d. sorával probléma akadt.", i));
                 }
                 i++;
             }
@@ -172,18 +170,18 @@ public class Idoregesz {
                 if(eletero > 0){
                     List<Utvonal> idg = utvonalak.stream().filter(x -> x.getStartID() == aktualisHelyszin).toList();
                     try {
-                        aktualisHelyszin = idg.stream()
+                        int helyszinSzam = idg.stream()
                             .filter(x -> x.getEgtaj().toLowerCase().equals(args[1].toLowerCase()))
                             .findFirst().get().getCelID();
-                        Helyszin hly = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get();
-                        if(hly.megy()){
-                            setHelyszin();
+                        //Helyszin hly = helyszinek.stream().filter(x -> x.getID() == helyszinSzam).findFirst().get();
+                        if(setHelyszin(helyszinSzam)){
+                            if(ugrasSzam > 2){
+                                eletero--;
+                            }
                         }   
                     } catch (Exception e) {
                         hibak.add("HIBA: Ebbe az irányba nem mehetsz!");
                     }
-                    
-                    // életerőcsökkentés, ha helyszínváltás történt
                 }
                 else{
                     leiras = "A játéknak vége! Elpatkoltál.";
@@ -192,7 +190,7 @@ public class Idoregesz {
                 break;
             case "felvesz":
                 List<Talal> tl = talal.stream().filter(x -> x.getHelyszinID() == aktualisHelyszin).toList();
-                List<Targy> tr = targyak.stream().filter(x -> x.getNev().toLowerCase() == args[1].toLowerCase()).toList();
+                List<Targy> tr = targyak.stream().filter(x -> x.getNev().toLowerCase().equals(args[1].toLowerCase())).toList();
                 
                 for (Talal item : tl){
                     for (Targy item2 : tr){
@@ -202,13 +200,12 @@ public class Idoregesz {
                                     eszkoztar.add(new InventoryItem(item.getTargyID()));
                                 }
                                 eszkoztar.stream().filter(x -> x.getTargyID() == item2.getID()).findFirst().get().ad(1);
+                                leiras = String.format("Rendben, a következő tárgyat felvetted: %s", item2.getNev());
                                 break;
                             }
                         }
                     }
                 }
-                if(true){
-                    leiras = String.format("Rendben, a következő tárgyat felvetted: %s", "");                }
                 break;
             default:
                 Helyszin hly = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get();
@@ -226,35 +223,61 @@ public class Idoregesz {
                 for (Utvonal item : utv){
                     if(item.getCelID() == felt.getHelyszinID()){
                         System.out.println(item.getCelID() == felt.getHelyszinID());
-                        aktualisHelyszin = item.getCelID();
-                        setHelyszin();
+                        setHelyszin(item.getCelID());
                         break;
                     }
                 }
                 //Helyszin dönt, ad-e, vagy nem
+                update();
                 break;
         }
-        if (args.length > 1 && testCheck()){
+        /*if (args.length > 1 && testCheck()){
             //helyszinek.get(0).getClass();
-        }
+        }*/
         update();
         return false;
     }
     
-    private static boolean setHelyszin(){
-        Helyszin hly = helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get();
-        // aktualisHelyszin = helyszinek.get(aktualisHelyszin);
-        leiras = hly.getLeiras();
-        setEletero(hly.getAdEletero());
-        ugrasSzam++;
-        if(ugrasSzam > 2){
-            eletero--;
+    private static boolean setHelyszin(int helyszinSzam){
+        boolean both = false;
+        boolean talal = false;
+        boolean fizet = true;
+        
+        
+        for (TargyAr item2 : targyar.stream().filter(x->x.getHelyszinID() == helyszinSzam).toList()){
+            for (InventoryItem item : eszkoztar){
+                if(item.getTargyID() == item2.getTargyID()){
+                    talal = true;
+                }
+                if(item.getTargyID() == item2.getTargyID() && item.getMenny() + item2.getAr() < 0){
+                    fizet = false;
+                }
+            }
         }
-        return false;
+        if(targyar.stream().filter(x->x.getHelyszinID() == helyszinSzam).count() == 0){
+            talal = true;
+        }
+        
+        Helyszin hly = helyszinek.stream().filter(x -> x.getID() == helyszinSzam).findFirst().get();
+        if(talal && fizet && helyszinek.stream().filter(x -> x.equals(hly)).findFirst().get().megy()){
+            for (InventoryItem item : eszkoztar){
+                for (TargyAr item2 : targyar.stream().filter(x->x.getHelyszinID() == helyszinSzam).toList()){
+                    eszkoztar.stream().filter(x -> x.equals(item)).findFirst().get().ad(item2.getAr());
+                    targyar.stream().filter(x -> x.equals(item2)).findFirst().get().vesz();
+                }
+            }
+            
+            leiras = hly.getLeiras();
+            setEletero(hly.getAdEletero());
+            ugrasSzam++;
+            aktualisHelyszin = helyszinSzam;
+            both = true;
+        }
+        return both;
     }
     
     private static boolean setEletero(int adEletero){
-        eletero += eletero + adEletero > maxEletero ? maxEletero : eletero + adEletero;
+        eletero = eletero + adEletero > maxEletero ? maxEletero : eletero + adEletero;
         return false;
     }
     // Lekérdezés függvények
@@ -268,7 +291,7 @@ public class Idoregesz {
         List<String> st = new ArrayList<String>();
         for (InventoryItem item : eszkoztar){
             Targy t = targyak.stream().filter(x-> x.getID() == item.getTargyID()).findFirst().get();
-            st.add(t.getNev() + ": " + item.getMenny());
+            st.add(item.getMenny() + "x" + t.getNev());
         }
         String[] starr = Arrays.copyOf(st.toArray(), st.toArray().length, String[].class);
         return starr;
@@ -276,12 +299,17 @@ public class Idoregesz {
     
     public static String[] getTalal(){
         List<String> st = new ArrayList<String>();
+       /* System.out.println(aktualisHelyszin);
+        for(Talal item : talal){
+            System.out.println("Te egy geci vagy!:");
+            System.out.println(item.getTargyID());
+        }*/
         List<Talal> tl = talal.stream().filter(x -> x.getHelyszinID() == aktualisHelyszin).toList();
         for(Talal item : tl){
-            st.add(targyak.stream().filter(x -> x.getID() == item.getTargyID()).findFirst().get().getNev() + ": " + item.getMenny());
+            //System.out.println("Szopd le a gecim!");
+            st.add(item.getMenny() + "x" + targyak.stream().filter(x -> x.getID() == item.getTargyID()).findFirst().get().getNev());
         }
         String[] starr = Arrays.copyOf(st.toArray(), st.toArray().length, String[].class);
-        System.out.println(starr);
         return starr;
     }
     
@@ -318,7 +346,6 @@ class InventoryItem{
             both = true;
         }
         return both;
-        
     }
 }
 
@@ -385,12 +412,6 @@ class Helyszin{
     public int getAdEletero(){
         return eleteroAr;
     }
-   /* public List<String> getTargyak(){
-        return talaltTargyak;
-    }*/
-   /* public String getMegkozelitesiFeltetel(){
-        return megkozelitesiFeltetel;
-    }*/
 }
 
 class Utvonal{
@@ -491,11 +512,33 @@ class TargyAr{
     private int helyszinID;
     private int targyID;
     private int ar;
+    private boolean egyszerFizetendo;
     
-    public TargyAr(int helyszinID, int targyID, int ar){
+    public TargyAr(int helyszinID, int targyID, int ar, boolean egyszerFizetendo){
         this.helyszinID = helyszinID;
         this.targyID = targyID;
         this.ar = ar;
+        this.egyszerFizetendo = egyszerFizetendo;
+    }
+    
+    public int getHelyszinID(){
+        return helyszinID;
+    }
+    
+    public int getTargyID(){
+        return targyID;
+    }
+    
+     public int getAr(){
+        return ar;
+    }
+     
+    public boolean vesz(){
+        boolean both = true;
+        if (egyszerFizetendo) {
+            ar = 0;
+        }
+        return both;
     }
 }
 
@@ -508,5 +551,7 @@ enum Irany{
     DelNyugat,
     EszakNyugat,
     Del,
-    Eszak
+    Eszak,
+    Fel,
+    Le
 }

@@ -49,24 +49,23 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         String s = currentRelativePath.toAbsolutePath().toString();
         //System.out.println(s);
         File f = new File(s + "\\" + Idoregesz.getKep());
-        System.out.println(f.getPath());
+        //System.out.println(f.getPath());
         if(f.exists()){
             
             
             try {
                 BufferedImage wPic = ImageIO.read(f);
-                System.out.println("Geci.");
                 Image img = wPic.getScaledInstance(309, 215, Image.SCALE_DEFAULT);
                 ImageIcon ic = new ImageIcon(img);
                 La_kep.setIcon(ic);
                
             } catch (Exception e) {
-                System.out.println("Kurva anyád!");
+                
             }
         }
         
         La_output.setText("<html><p style=\"padding: 3px 1px 3px 5px;\">"+Idoregesz.getLeiras()+"</p></html>");
-        System.out.println(String.format("%d. Pisztácia elfogyott, vanillia nem is volt.", ehe));
+        // System.out.println(String.format("%d. Pisztácia elfogyott, vanillia nem is volt.", ehe));
         ehe++;
     }
     
