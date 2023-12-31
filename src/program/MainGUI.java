@@ -43,6 +43,7 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
        this.add(ld);
        //ld.show();
        this.setComponentZOrder(ld, 0);
+       La_output.setVisible(false);
        Bt_send.setVisible(false);
        Tf_input.setVisible(false);
         //this.setComponentZOrder(Tf_input, 1);
@@ -355,6 +356,7 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         ld.removeListener(this);
         ld.setVisible(false);
         this.remove(ld);
+        La_output.setVisible(true);
         Tf_input.setVisible(true);
         Bt_send.setVisible(true);
 
