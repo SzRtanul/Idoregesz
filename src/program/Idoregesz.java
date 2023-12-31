@@ -27,11 +27,13 @@ public class Idoregesz {
         listeners.remove(listener);
     }
     private static void update(){
+       deleteZeroElements();
        listeners.forEach(x -> x.charachterUpdate());
     }
     // </editor-fold>
     // Paraméterek
-    static int aktualisHelyszin = 1;
+    private static int aktualisHelyszin = 1;
+    
     private final static List<InventoryItem> eszkoztar = new ArrayList<InventoryItem>();
     private final static List<String> hibak = new ArrayList<String>();
     
@@ -47,15 +49,18 @@ public class Idoregesz {
     private static int maxEletero = 10;
     private static int ugrasSzam = 0;
     private static String leiras;
-    
+    private static String hiba;
+   
     // Előkészület
     public static void Restart(boolean reupload){
         aktualisHelyszin = 1;
-        eletero = 10;
+        eletero = 5;
         maxEletero = 10;
         ugrasSzam = 0;
+        
         if(reupload) 
         {
+            // <editor-fold defaultstate="collapsed" desc="Fájlok beolvasása">  
             eszkoztar.clear();
             helyszinek.clear();
             utvonalak.clear();
@@ -131,15 +136,16 @@ public class Idoregesz {
                 }
                 i++;
             }
+            // </editor-fold>
         }
+        
        /* for(Helyszin item: helyszinek){
             System.out.println(String.format("%d%s%s", item.getID(), item.getNev(), item.getLeiras()));
         }*/
-        leiras = helyszinek.stream()
-                .filter(item -> item.getID() == aktualisHelyszin)
-                .findFirst().get().getLeiras();
+        setHelyszin(aktualisHelyszin);
         update();
     }
+    
     
     private static List<String> uploadList(String filename){
         //Helyszinek
@@ -157,11 +163,6 @@ public class Idoregesz {
         }
         return items;
     }
-    
-    private static boolean testCheck(){      
-        return true;
-    }
-
     
     // Játék
     public static boolean Command(String[] args){
@@ -200,7 +201,7 @@ public class Idoregesz {
                                     eszkoztar.add(new InventoryItem(item.getTargyID()));
                                 }
                                 eszkoztar.stream().filter(x -> x.getTargyID() == item2.getID()).findFirst().get().ad(1);
-                                leiras = String.format("Rendben, a következő tárgyat felvetted: %s", item2.getNev());
+                                //leiras = String.format("Rendben, a következő tárgyat felvetted: %s", item2.getNev());
                                 break;
                             }
                         }
@@ -218,16 +219,19 @@ public class Idoregesz {
                 List<Utvonal> utv = utvonalak.stream()
                         .filter(x -> x.getStartID() == aktualisHelyszin).toList();
                 //System.out.println("" + );
-                Feltetel felt = feltetelek.stream()
-                        .filter(x -> x.getMegkozelitesiFeltetel().toLowerCase().equals(sb.toString().toLowerCase())).findFirst().get();
-                for (Utvonal item : utv){
-                    if(item.getCelID() == felt.getHelyszinID()){
-                        System.out.println(item.getCelID() == felt.getHelyszinID());
-                        setHelyszin(item.getCelID());
-                        break;
+                try {
+                    Feltetel felt = feltetelek.stream()
+                        .filter(x -> x.getMegkozelitesiFeltetel().toLowerCase().equals(sb.toString()
+                                .toLowerCase())).findFirst().get();
+                    for (Utvonal item : utv){
+                        if(item.getCelID() == felt.getHelyszinID()){
+                            System.out.println(item.getCelID() == felt.getHelyszinID());
+                            setHelyszin(item.getCelID());
+                            break;
+                        }
                     }
+                } catch (Exception e) {
                 }
-                //Helyszin dönt, ad-e, vagy nem
                 update();
                 break;
         }
@@ -240,26 +244,20 @@ public class Idoregesz {
     
     private static boolean setHelyszin(int helyszinSzam){
         boolean both = false;
-        boolean talal = false;
         boolean fizet = true;
         
         
         for (TargyAr item2 : targyar.stream().filter(x->x.getHelyszinID() == helyszinSzam).toList()){
-            for (InventoryItem item : eszkoztar){
-                if(item.getTargyID() == item2.getTargyID()){
-                    talal = true;
-                }
-                if(item.getTargyID() == item2.getTargyID() && item.getMenny() + item2.getAr() < 0){
-                    fizet = false;
-                }
+            if(eszkoztar.stream().filter(x -> x.getTargyID() == item2.getTargyID()).count() == 0){
+                eszkoztar.add(new InventoryItem(item2.getTargyID()));
             }
-        }
-        if(targyar.stream().filter(x->x.getHelyszinID() == helyszinSzam).count() == 0){
-            talal = true;
+            if(eszkoztar.stream().filter(x -> x.getTargyID() == item2.getTargyID()).findFirst().get().getMenny() + item2.getAr() < 0){
+                    fizet = false;
+            }
         }
         
         Helyszin hly = helyszinek.stream().filter(x -> x.getID() == helyszinSzam).findFirst().get();
-        if(talal && fizet && helyszinek.stream().filter(x -> x.equals(hly)).findFirst().get().megy()){
+        if(fizet && helyszinek.stream().filter(x -> x.equals(hly)).findFirst().get().megy()){
             for (InventoryItem item : eszkoztar){
                 for (TargyAr item2 : targyar.stream().filter(x->x.getHelyszinID() == helyszinSzam).toList()){
                     eszkoztar.stream().filter(x -> x.equals(item)).findFirst().get().ad(item2.getAr());
@@ -278,8 +276,17 @@ public class Idoregesz {
     
     private static boolean setEletero(int adEletero){
         eletero = eletero + adEletero > maxEletero ? maxEletero : eletero + adEletero;
+        if(eletero == maxEletero) ugrasSzam = 0; // Emberünknek 3 ugrás erejéig mázlija van
         return false;
     }
+    
+    private static boolean deleteZeroElements(){
+        talal.removeAll(talal.stream().filter(x -> x.getMenny() == 0).toList());
+        targyar.removeAll(targyar.stream().filter(x -> x.getAr()== 0).toList());
+        eszkoztar.removeAll(eszkoztar.stream().filter(x -> x.getMenny() == 0).toList());
+        return false;
+    }
+    
     // Lekérdezés függvények
     public static int getEletero(){
         return eletero;

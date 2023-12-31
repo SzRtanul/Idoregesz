@@ -12,4 +12,8 @@ public class EI {
     interface charachterListener{
         public void charachterUpdate();
     }
+    
+    interface loadingListener{
+        public void stateEnd();
+    }
 }

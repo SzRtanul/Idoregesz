@@ -70,4 +70,15 @@
     nbproject/build-impl.xml file. 
 
     -->
+	<path id="libs">
+    <fileset dir="extlib">
+        <include name="*.jar"/>
+    </fileset>
+	</path>
+	<target name="compile" depends="init">
+		<mkdir dir="build/classes"/>
+		<javac srcdir="src" destdir="build/classes">
+			<classpath refid="libs"/>
+		</javac>
+	</target>
 </project>

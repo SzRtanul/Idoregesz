@@ -5,7 +5,11 @@
 package program;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import static java.lang.Thread.yield;
@@ -15,19 +19,37 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 /**
  *
  * @author SzabóRoland(SZF_2023
  */
-public class MainGUI extends javax.swing.JFrame implements EI.charachterListener{
+public class MainGUI extends javax.swing.JFrame implements EI.charachterListener, EI.loadingListener{
 
     /**
      * Creates new form MainGUI
      */
+    Loader ld = new Loader();
     int ehe = 0;
     public MainGUI() {
-        initComponents();
+       initComponents();
+       ld.addListener(this);
+       ld.setBounds(10, 10, this.getWidth(), this.getHeight());
+       ld.setVisible(true);
+       ld.repaint();
+       ld.setVisible(true);
+       this.add(ld);
+       //ld.show();
+       this.setComponentZOrder(ld, 0);
+       Bt_send.setVisible(false);
+       Tf_input.setVisible(false);
+        //this.setComponentZOrder(Tf_input, 1);
+       ld.play();
+       
+
+        //jLabel5.setText("<html><embed type=\"video/webm\" src=\"VW1.9TDIEngineSound.mp4\" width=\"400\" height=\"300\"></html>");
         Pr_eletero.setMaximum(Idoregesz.getMaxEletero());
         Idoregesz.addListener(this);
         Idoregesz.Restart(true);
@@ -134,7 +156,7 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         Pa_kep.setLayout(Pa_kepLayout);
         Pa_kepLayout.setHorizontalGroup(
             Pa_kepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(La_kep, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(La_kep, javax.swing.GroupLayout.PREFERRED_SIZE, 305, Short.MAX_VALUE)
         );
         Pa_kepLayout.setVerticalGroup(
             Pa_kepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,7 +182,7 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
 
         Pr_eletero.setBackground(new java.awt.Color(51, 255, 51));
         Pr_eletero.setMaximum(10);
-        Pr_eletero.setValue(3);
+        Pr_eletero.setValue(1);
 
         La_eletero.setText("0");
 
@@ -326,4 +348,16 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void stateEnd() {
+        
+        ld.removeListener(this);
+        ld.setVisible(false);
+        this.remove(ld);
+        Tf_input.setVisible(true);
+        Bt_send.setVisible(true);
+
+//throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

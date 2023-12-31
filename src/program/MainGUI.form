@@ -138,7 +138,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="La_kep" alignment="0" pref="0" max="32767" attributes="0"/>
+              <Component id="La_kep" alignment="0" pref="305" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -204,7 +204,7 @@
           <Color blue="33" green="ff" red="33" type="rgb"/>
         </Property>
         <Property name="maximum" type="int" value="10"/>
-        <Property name="value" type="int" value="3"/>
+        <Property name="value" type="int" value="1"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="La_eletero">
