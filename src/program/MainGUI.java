@@ -37,9 +37,10 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
      */
     int ehe = 0;
     public MainGUI() {
-         if(!checkRunnable()){
+        /* if(!checkRunnable()){
              JOptionPane.showMessageDialog(null, "A program futtatásához a VLC media player 4.0.0 telepítése szükséges.", "Hiba", JOptionPane.ERROR_MESSAGE);
-         }
+         }*/
+        JOptionPane.showMessageDialog(null, "A program normál futásához szükséges a VLC media player 4.0.0 telepítése.", "Információ", JOptionPane.INFORMATION_MESSAGE);
         JOptionPane.showMessageDialog(null, "2546-ot írunk. Most alakult meg\n" +
                                                         "az Időrégészeti társaság, mely-\n" +
                                                         "nek egyik ügynöke vagy. Egy gaz-\n" +
