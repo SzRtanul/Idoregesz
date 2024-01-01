@@ -151,7 +151,7 @@ public class Idoregesz {
         //Helyszinek
         File f = new File(filename);
         List<String> items = new ArrayList<String>();
-        try(Scanner sc = new Scanner(f)){
+        try(Scanner sc = new Scanner(f, "utf-8")){
             for(int i=0; sc.hasNextLine(); i++){
                 items.add(sc.nextLine());
                 //System.out.println(items.get(i).toString());
@@ -220,12 +220,13 @@ public class Idoregesz {
                         .filter(x -> x.getStartID() == aktualisHelyszin).toList();
                 //System.out.println("" + );
                 try {
-                    Feltetel felt = feltetelek.stream()
-                        .filter(x -> x.getMegkozelitesiFeltetel().toLowerCase().equals(sb.toString()
-                                .toLowerCase())).findFirst().get();
                     for (Utvonal item : utv){
-                        if(item.getCelID() == felt.getHelyszinID()){
-                            System.out.println(item.getCelID() == felt.getHelyszinID());
+                        List<Feltetel> f = feltetelek.stream()
+                                .filter(x -> x.getHelyszinID() == item.getCelID() 
+                                && x.getMegkozelitesiFeltetel().toLowerCase()
+                                .equals(sb.toString().toLowerCase())).toList();
+                        if(f.stream().count() > 0 ){
+                            //System.out.println(item.getCelID() == f.stream().findFirst().get().getHelyszinID());
                             setHelyszin(item.getCelID());
                             break;
                         }
@@ -235,9 +236,6 @@ public class Idoregesz {
                 update();
                 break;
         }
-        /*if (args.length > 1 && testCheck()){
-            //helyszinek.get(0).getClass();
-        }*/
         update();
         return false;
     }
@@ -306,14 +304,9 @@ public class Idoregesz {
     
     public static String[] getTalal(){
         List<String> st = new ArrayList<String>();
-       /* System.out.println(aktualisHelyszin);
-        for(Talal item : talal){
-            System.out.println("Te egy geci vagy!:");
-            System.out.println(item.getTargyID());
-        }*/
+       
         List<Talal> tl = talal.stream().filter(x -> x.getHelyszinID() == aktualisHelyszin).toList();
         for(Talal item : tl){
-            //System.out.println("Szopd le a gecim!");
             st.add(item.getMenny() + "x" + targyak.stream().filter(x -> x.getID() == item.getTargyID()).findFirst().get().getNev());
         }
         String[] starr = Arrays.copyOf(st.toArray(), st.toArray().length, String[].class);
@@ -327,6 +320,28 @@ public class Idoregesz {
     public static String getKep(){
         return helyszinek.stream().filter(x -> x.getID() == aktualisHelyszin).findFirst().get().getKep();
     }
+    
+    public static List<Feltetel> getEgyebIranyok(){
+        List<Feltetel> felt = new ArrayList<Feltetel>();
+        List<Utvonal> utv = utvonalak.stream()
+                        .filter(x -> x.getStartID() == aktualisHelyszin).toList();
+        for (Utvonal item : utv){
+            List<Feltetel> f = feltetelek.stream()
+                .filter(x -> x.getHelyszinID() == item.getCelID()).toList();
+            for (Feltetel item2 : f){
+                felt.add(item2);
+            }
+        }
+        return felt;
+    }
+    
+    public static List<Utvonal> getIranyok(){
+        return utvonalak.stream().filter(x -> x.getStartID() == aktualisHelyszin).toList();
+    }
+    
+    public static String getHiba(){
+        return hiba;
+    } 
 }
 
 class InventoryItem{

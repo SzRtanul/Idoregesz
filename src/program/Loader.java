@@ -81,16 +81,16 @@ public class Loader extends javax.swing.JPanel implements MediaEventListener{
                     mediaPlayerComponent.setVisible(false);
                     jPanel1.setVisible(false);
                     jProgressBar1.setVisible(false);
-                    listeners.forEach(x -> x.stateEnd());
+                    close();
                 }
             }
         });
         timer.start();
     }
     
-   /* private void close(){
-        this.close();   
-    }*/
+    private void close(){
+        listeners.forEach(x -> x.stateEnd(this));  
+    }
    
     /**
      * This method is called from within the constructor to initialize the form.
@@ -103,6 +103,7 @@ public class Loader extends javax.swing.JPanel implements MediaEventListener{
 
         jPanel1 = new javax.swing.JPanel();
         jProgressBar1 = new javax.swing.JProgressBar();
+        jLabel1 = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(649, 363));
 
@@ -118,6 +119,8 @@ public class Loader extends javax.swing.JPanel implements MediaEventListener{
         jProgressBar1.setOpaque(true);
         jProgressBar1.setPreferredSize(new java.awt.Dimension(573, 11));
 
+        jLabel1.setText("LOADING...");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -125,13 +128,19 @@ public class Loader extends javax.swing.JPanel implements MediaEventListener{
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(250, 250, 250)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel1)
+                .addGap(19, 19, 19))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -148,12 +157,13 @@ public class Loader extends javax.swing.JPanel implements MediaEventListener{
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables

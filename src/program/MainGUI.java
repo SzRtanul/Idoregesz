@@ -21,6 +21,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 /**
  *
@@ -31,10 +32,33 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
     /**
      * Creates new form MainGUI
      */
-    Loader ld = new Loader();
     int ehe = 0;
     public MainGUI() {
-       initComponents();
+        JOptionPane.showMessageDialog(null, "2546-ot írunk. Most alakult meg\n" +
+                                                        "az Időrégészeti társaság, mely-\n" +
+                                                        "nek egyik ügynöke vagy. Egy gaz-\n" +
+                                                        "dag gyűjtő megrendelésére visz-\n" +
+                                                        "sza kell menned a középkorba, és\n" +
+                                                        "meg kell szerezned a mesebeli\n" +
+                                                        "griffmadár egyik tojását. Utadon\n" +
+                                                        "nem segít a modern technika,\n" +
+                                                        "mindent egyedül kell csinálnod!\n\n" +
+                                                        "Légy nagyon körültekintő, mindent\n" +
+                                                        "vizsgálj meg!");
+        Loader ld = new Loader();
+        initComponents();
+        initLoad(ld);
+        Idoregesz.addListener(this);
+        Idoregesz.Restart(true);
+
+        Pr_eletero.setMaximum(Idoregesz.getMaxEletero());
+        this.getContentPane().setBackground( Color.ORANGE );
+        La_output.setOpaque(true);
+        La_output.setBackground(Color.CYAN);
+        
+    }
+    
+    private void initLoad(Loader ld){
        ld.addListener(this);
        ld.setBounds(10, 10, this.getWidth(), this.getHeight());
        ld.setVisible(true);
@@ -46,24 +70,17 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
        La_output.setVisible(false);
        Bt_send.setVisible(false);
        Tf_input.setVisible(false);
-        //this.setComponentZOrder(Tf_input, 1);
+       //this.setComponentZOrder(Tf_input, 1);
        ld.play();
-       
-
-        //jLabel5.setText("<html><embed type=\"video/webm\" src=\"VW1.9TDIEngineSound.mp4\" width=\"400\" height=\"300\"></html>");
-        Pr_eletero.setMaximum(Idoregesz.getMaxEletero());
-        Idoregesz.addListener(this);
-        Idoregesz.Restart(true);
-        this.getContentPane().setBackground( Color.ORANGE );
-        La_output.setOpaque(true);
-        La_output.setBackground(Color.CYAN);
     }
     
     @Override
     public void charachterUpdate(){
         Pr_eletero.setValue(Idoregesz.getEletero());
         La_eletero.setText(String.valueOf(Idoregesz.getEletero()));
-        La_hiba.setText(getListToTextForJLabel(new String[]{""}));
+        La_irany.setText(getUtvonalakToTextForJLabel(Idoregesz.getIranyok()));
+        La_appliedCommands.setText(getFeltetelekToTextForJLabel(Idoregesz.getEgyebIranyok()));
+        La_hiba.setText(Idoregesz.getHiba());
         La_talal.setText(getListToTextForJLabel(Idoregesz.getTalal()));
         La_inventory.setText(getListToTextForJLabel(Idoregesz.getEszkoztarGUI()));
         
@@ -78,16 +95,24 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
             
             try {
                 BufferedImage wPic = ImageIO.read(f);
-                Image img = wPic.getScaledInstance(309, 215, Image.SCALE_DEFAULT);
+                Image img = wPic.getScaledInstance(La_kep.getWidth(), La_kep.getHeight(), Image.SCALE_DEFAULT);
                 ImageIcon ic = new ImageIcon(img);
+                La_kep.setBounds(0, 0, this.getWidth(), this.getHeight());
                 La_kep.setIcon(ic);
+                
                
             } catch (Exception e) {
                 
             }
         }
         
-        La_output.setText("<html><p style=\"padding: 3px 1px 3px 5px;\">"+Idoregesz.getLeiras()+"</p></html>");
+        La_output.setText((
+            "<html>"
+                + "<head>"
+                    + "<meta charset=\"UTF-8\">"
+                + "</head>"
+                + "<p style=\"padding: 3px 1px 3px 5px; \">"+Idoregesz.getLeiras()+"</p>"
+            + "</html>"));
         // System.out.println(String.format("%d. Pisztácia elfogyott, vanillia nem is volt.", ehe));
         ehe++;
     }
@@ -109,6 +134,23 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         } s+="</html>";
         return s;
     }
+    
+    private String getFeltetelekToTextForJLabel(List<Feltetel> l){
+        String s = "<html>";
+        for (Feltetel item : l){
+            s += "- " + item.getMegkozelitesiFeltetel() + "<br>";
+        } s+="</html>";
+        return s;
+    }
+    
+    private String getUtvonalakToTextForJLabel(List<Utvonal> l){
+        String s = "<html>";
+        for (Utvonal item : l){
+            s += item.getEgtaj() + " ";
+        } s+="</html>";
+        return s;
+    }
+    
     private String getListToText(String[] l){
         String s = "";
         for (String item : l){
@@ -139,6 +181,9 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         La_inventory = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         La_talal = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        La_appliedCommands = new javax.swing.JLabel();
+        La_irany = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 153, 0));
@@ -157,7 +202,7 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         Pa_kep.setLayout(Pa_kepLayout);
         Pa_kepLayout.setHorizontalGroup(
             Pa_kepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(La_kep, javax.swing.GroupLayout.PREFERRED_SIZE, 305, Short.MAX_VALUE)
+            .addComponent(La_kep, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
         );
         Pa_kepLayout.setVerticalGroup(
             Pa_kepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,76 +258,98 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         La_talal.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         La_talal.setAutoscrolls(true);
 
+        jLabel5.setText("<html>Egyéb<br>lehetőségek:</html>");
+
+        La_appliedCommands.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        La_irany.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        La_irany.setText("Default");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(106, 106, 106)
-                        .addComponent(Tf_input, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(La_irany, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(102, 102, 102)
-                                .addComponent(La_eletero, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(La_eletero, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(Pr_eletero, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(32, 32, 32)
-                                .addComponent(La_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jLabel2)
+                            .addComponent(La_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(La_output, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(Pa_kep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(Pa_kep, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(Tf_input)))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4)
                     .addComponent(Bt_send)
-                    .addComponent(La_hiba, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
-                    .addComponent(La_talal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(La_talal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(La_appliedCommands, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(La_hiba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(3, 3, 3))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(La_inventory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(La_eletero)
-                                        .addComponent(jLabel1))
-                                    .addComponent(Pr_eletero, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(8, 8, 8))
-                            .addComponent(Pa_kep, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(La_output, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(La_hiba, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(La_talal, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(La_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(La_eletero))
+                    .addComponent(Pr_eletero, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(La_irany)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Bt_send)
-                    .addComponent(Tf_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(Pa_kep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(La_output, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Bt_send)
+                            .addComponent(Tf_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(La_hiba, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(La_appliedCommands, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(La_talal, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 57, Short.MAX_VALUE))))
         );
 
         pack();
@@ -335,9 +402,11 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Bt_send;
+    private javax.swing.JLabel La_appliedCommands;
     private javax.swing.JLabel La_eletero;
     private javax.swing.JLabel La_hiba;
     private javax.swing.JLabel La_inventory;
+    private javax.swing.JLabel La_irany;
     private javax.swing.JLabel La_kep;
     private javax.swing.JLabel La_output;
     private javax.swing.JLabel La_talal;
@@ -348,10 +417,11 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void stateEnd() {
+    public void stateEnd(Loader ld) {
         
         ld.removeListener(this);
         ld.setVisible(false);
@@ -359,7 +429,5 @@ public class MainGUI extends javax.swing.JFrame implements EI.charachterListener
         La_output.setVisible(true);
         Tf_input.setVisible(true);
         Bt_send.setVisible(true);
-
-//throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

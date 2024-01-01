@@ -14,6 +14,6 @@ public class EI {
     }
     
     interface loadingListener{
-        public void stateEnd();
+        public void stateEnd(Loader ld);
     }
 }
