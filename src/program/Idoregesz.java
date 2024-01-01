@@ -336,7 +336,7 @@ public class Idoregesz {
     }
     
     public static List<Utvonal> getIranyok(){
-        return utvonalak.stream().filter(x -> x.getStartID() == aktualisHelyszin).toList();
+        return utvonalak.stream().filter(x -> x.getStartID() == aktualisHelyszin && !x.getEgtaj().equals("-")).toList();
     }
     
     public static String getHiba(){

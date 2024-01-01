@@ -52,11 +52,11 @@ public class Loader extends javax.swing.JPanel implements MediaEventListener{
         mediaPlayerComponent.mediaPlayer().media().events().addMediaEventListener(this);
         jPanel1.add(mediaPlayerComponent);
         //mediaPlayerComponent.mediaPlayer().status().time();
-        System.out.println(mediaPlayerComponent.mediaPlayer().status().time());
+       /* System.out.println(mediaPlayerComponent.mediaPlayer().status().time());
         System.out.println(mediaPlayerComponent.mediaPlayer().status().length());
         System.out.println(mediaPlayerComponent.mediaPlayer().status().position());
         System.out.println(mediaPlayerComponent.mediaPlayer().status().rate());
-        //System.out.println(mediaPlayerComponent.mediaPlayer().status().state());
+        //System.out.println(mediaPlayerComponent.mediaPlayer().status().state());*/
         
         jProgressBar1.setMinimum(0);
         
@@ -150,7 +150,7 @@ public class Loader extends javax.swing.JPanel implements MediaEventListener{
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(42, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
