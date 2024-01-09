@@ -70,7 +70,8 @@ public class Idoregesz {
             talal.clear();
             //Helyszín
             int i = 0;
-            for(String item : uploadList("helyszin.txt")){
+            String filename = "helyszin.txt";
+            for(String item : uploadList(filename)){
                 try {
                     String[] sp = item.split(";");
                     helyszinek.add(new Helyszin(Integer.parseInt(sp[0]), sp[1], 
@@ -78,7 +79,7 @@ public class Idoregesz {
                             Integer.parseInt(sp[4]) == 1, Integer.parseInt(sp[5]),
                             Byte.parseByte(sp[6]) ,sp[7], sp[8])); 
                 } catch (Exception e) {
-                    System.out.println(String.format("A helyszinek.txt fájl %d. sorával probléma akadt.", i));
+                    System.out.println(String.format("A %s fájl %d. sorával probléma akadt.", filename, i));
                 }
                 i++;
             }
@@ -148,13 +149,11 @@ public class Idoregesz {
     
     
     private static List<String> uploadList(String filename){
-        //Helyszinek
         File f = new File(filename);
         List<String> items = new ArrayList<String>();
         try(Scanner sc = new Scanner(f, "utf-8")){
             for(int i=0; sc.hasNextLine(); i++){
                 items.add(sc.nextLine());
-                //System.out.println(items.get(i).toString());
             }
             sc.close();
         } catch (FileNotFoundException ex) {
